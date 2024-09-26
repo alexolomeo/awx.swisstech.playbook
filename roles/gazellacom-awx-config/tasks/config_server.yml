@@ -37,7 +37,7 @@
   community.crypto.openssh_keypair:
     path: "{{ gazella_key_home }}/{{ gazellacom_awx_project }}/{{ gazellacom_awx_project|upper }}-AWX-USER"
 
-- name: KEY SSH - Add key for Developer User
+- name: "KEY SSH - Add key for {{ gazellacom_awx_user }}  User"
   lineinfile:
     dest: /home/{{ gazellacom_awx_user }}/.ssh/authorized_keys
     state: present

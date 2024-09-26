@@ -1,5 +1,6 @@
 ---
 - name: SSH USER - Add Gazellacom system group security
+  become: yes
   ansible.builtin.group:
     name: "{{ gazellacom_client_group }}"
     state: present
