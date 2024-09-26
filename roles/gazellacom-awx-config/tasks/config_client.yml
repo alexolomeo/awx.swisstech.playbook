@@ -1,0 +1,76 @@
+---
+- name: SSH USER - Add Gazellacom system group security
+  ansible.builtin.group:
+    name: "{{ gazella_group_security }}"
+    state: present
+  tags:
+    - gazellacom_user
+
+- name: SSH USER - Add Gazellacom AWX user
+  ansible.builtin.user:
+    name: "{{ gazellacom_client_user }}"
+    group: "{{ gazella_group_security }}"
+    state: present
+    shell: "{{ gazellacom_client_user_shell }}"
+    password: "{{ gazellacom_client_user_passwd }}"
+    update_password: "{{ gazellacom_client_user_update_password }}"
+    system: "{{ gazellacom_client_user_system }}"
+  tags:
+    - gazellacom_user
+
+- name: SSH USER - Add directory .ssh for Developer User
+  file:
+    path: "/home/{{ gazellacom_client_user }}/.ssh"
+    state: directory
+    mode: 0700
+    owner: "{{ item.name }}"
+    group: "{{ gazella_group_security }}"
+  when: item.auth_key  is defined
+  with_items: "{{gazella_users}}"
+
+- name: SSH USER - Copy the file from bbuffer key folder  to gazellacom
+  ansible.builtin.copy: 
+    src: "key/{{ gazella_awx_project|upper }}-AWX-USER.pub"
+    dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub"
+          
+- name: SSH USER - Add key for AWX User
+  lineinfile:
+    dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
+    state: present
+    create: yes
+    line: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub') }}"
+    owner: "{{ gazellacom_client_user }}"
+    group: "{{ gazella_group_security }}"
+    mode: 0644
+
+- name: "SSH USER - Create sudoers config for {{ gazellacom_client_user }} user"
+  ansible.builtin.template:
+    src: gazellacom.sudo.j2
+    dest: "/etc/sudoers.d/{{ gazellacom_client_user }}"
+    mode: 0440
+    owner: root
+    group: root
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: "SSH USER - Delete compress {{ gazellacom_remote_workdir }}/build_{{ gazellacom_number_build }}.tar.gz"
+  ansible.builtin.file:
+    path: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub"
+    state: absent
+  ignore_errors: yes
+
+- name: SSH USER -  Create awx  directory
+  ansible.builtin.file:
+    path: "{{ gazellacom_awx_base }}"
+    state: directory
+    owner: "{{ gazellacom_user }}"
+    group: "{{ gazella_group_security }}"
+    mode: 0775
+    force: no
+  tags:
+    - gazellacom_log
+
+#- name: "push file to remote host {{ gazellacom_project }} {{ gazellacom_environment }}"
+#  block:
+#  when: inventory_hostname == 'com'
+
+

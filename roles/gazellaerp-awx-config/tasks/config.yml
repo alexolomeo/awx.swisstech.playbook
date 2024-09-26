@@ -1,0 +1,39 @@
+---
+- name: Install - Add Gazellacom system group security
+  ansible.builtin.group:
+    name: "{{ gazella_group_security }}"
+    state: present
+  tags:
+    - gazellacom_user
+
+- name: Install - Add Gazellacom system user
+  ansible.builtin.user:
+    name: "{{ gazellacom_user }}"
+    shell: "{{ gazellacom_user_shell }}"
+    password: "{{ gazellacom_user_passwd }}"
+    update_password: "{{ gazellacom_user_update_password }}"
+    system: "{{ gazellacom_user_system }}"
+  tags:
+    - gazellacom_user
+
+- name: "Install - Create sudoers config for {{ gazellacom_user }} user"
+  ansible.builtin.template:
+    src: gazellacom.sudo.j2
+    dest: "/etc/sudoers.d/{{ gazellacom_user }}"
+    mode: 0440
+    owner: root
+    group: root
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Install - Create log directory
+  ansible.builtin.file:
+    path: "{{ gazellacom_logdir }}"
+    state: directory
+    owner: "{{ gazellacom_user }}"
+    group: "{{ gazella_group_security }}"
+    mode: 0775
+    force: no
+  tags:
+    - gazellacom_log
+
+

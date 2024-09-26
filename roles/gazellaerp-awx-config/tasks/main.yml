@@ -1,0 +1,21 @@
+---
+#- name: "Delete previous workdir (if requested)."
+#  ansible.builtin.file:
+#    path: /opt/demoansible3
+#    state: directory
+
+- name: "Connfig to environment an user access"
+  ansible.builtin.include_tasks: config.yml
+  when: gazellacom_mode == 'config'    
+
+- name: "Backup DB GazellaCOM"
+  ansible.builtin.include_tasks: backup.yml
+  when: gazellacom_mode == 'backup'    
+
+- name: "Copy From Production"
+  ansible.builtin.include_tasks: copyfromprod.yml
+  when: gazellacom_mode == 'copyfromprod'    
+
+#- name: "Deploy new package on wildfly"
+#  ansible.builtin.include_tasks: deploy.yml
+#  when: gazellacom_mode == 'deploy'    
