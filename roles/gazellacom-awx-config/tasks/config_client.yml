@@ -1,7 +1,7 @@
 ---
 - name: SSH USER - Add Gazellacom system group security
   ansible.builtin.group:
-    name: "{{ gazella_group_security }}"
+    name: "{{ gazellacom_client_group }}"
     state: present
   tags:
     - gazellacom_user
@@ -9,7 +9,7 @@
 - name: SSH USER - Add Gazellacom AWX user
   ansible.builtin.user:
     name: "{{ gazellacom_client_user }}"
-    group: "{{ gazella_group_security }}"
+    group: "{{ gazellacom_client_group }}"
     state: present
     shell: "{{ gazellacom_client_user_shell }}"
     password: "{{ gazellacom_client_user_passwd }}"
@@ -24,7 +24,7 @@
     state: directory
     mode: 0700
     owner: "{{ item.name }}"
-    group: "{{ gazella_group_security }}"
+    group: "{{ gazellacom_client_group }}"
   when: item.auth_key  is defined
   with_items: "{{gazella_users}}"
 
@@ -40,7 +40,7 @@
     create: yes
     line: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub') }}"
     owner: "{{ gazellacom_client_user }}"
-    group: "{{ gazella_group_security }}"
+    group: "{{ gazellacom_client_group }}"
     mode: 0644
 
 - name: "SSH USER - Create sudoers config for {{ gazellacom_client_user }} user"
@@ -63,7 +63,7 @@
     path: "{{ gazellacom_awx_base }}"
     state: directory
     owner: "{{ gazellacom_user }}"
-    group: "{{ gazella_group_security }}"
+    group: "{{ gazellacom_client_group }}"
     mode: 0775
     force: no
   tags:
