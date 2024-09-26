@@ -53,7 +53,7 @@
     state: absent
   ignore_errors: yes
 
-- name: KEY SSH - Fetch the file from build localserver
+- name: KEY SSH - Fetch the file from temporal files
   run_once: yes
   fetch: 
     src: "{{ gazella_key_home }}/{{ gazellacom_awx_project }}/{{ gazellacom_awx_project|upper }}-AWX-USER.pub"

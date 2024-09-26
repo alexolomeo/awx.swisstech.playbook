@@ -19,22 +19,22 @@
   tags:
     - gazellacom_user
 
-- name: SSH USER - Add directory .ssh for Developer User
+- name: "SSH USER - Add directory .ssh for {{ gazellacom_client_user }} User"
   file:
     path: "/home/{{ gazellacom_client_user }}/.ssh"
     state: directory
     mode: 0700
-    owner: "{{ item.name }}"
+    owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
   when: item.auth_key  is defined
   with_items: "{{gazella_users}}"
 
-- name: SSH USER - Copy the file from bbuffer key folder  to gazellacom
+- name: "SSH USER - Copy the file from bbuffer key folder  {{ gazellacom_client_user }}"
   ansible.builtin.copy: 
-    src: "key/{{ gazella_awx_project|upper }}-AWX-USER.pub"
-    dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub"
+    src: "key/{{ gazellacom_project|upper }}-AWX-USER.pub"
+    dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
           
-- name: SSH USER - Add key for AWX User
+- name: "SSH USER - Add key for {{ gazellacom_client_user }}"
   lineinfile:
     dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
     state: present
@@ -55,7 +55,7 @@
 
 - name: "SSH USER - Delete compress {{ gazellacom_remote_workdir }}/build_{{ gazellacom_number_build }}.tar.gz"
   ansible.builtin.file:
-    path: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub"
+    path: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
     state: absent
   ignore_errors: yes
 
@@ -63,7 +63,7 @@
   ansible.builtin.file:
     path: "{{ gazellacom_awx_base }}"
     state: directory
-    owner: "{{ gazellacom_user }}"
+    owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
     mode: 0775
     force: no
