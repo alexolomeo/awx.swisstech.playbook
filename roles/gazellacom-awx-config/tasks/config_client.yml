@@ -19,15 +19,13 @@
   tags:
     - gazellacom_user
 
-- name: "SSH USER - Add directory .ssh for {{ gazellacom_client_user }} User"
+- name: "SSH USER - Add directory for /home/{{ gazellacom_client_user }}/.ssh User"
   file:
     path: "/home/{{ gazellacom_client_user }}/.ssh"
     state: directory
     mode: 0700
     owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
-  when: item.auth_key  is defined
-  with_items: "{{gazella_users}}"
 
 - name: "SSH USER - Copy the file from bbuffer key folder  {{ gazellacom_client_user }}"
   ansible.builtin.copy: 
@@ -39,7 +37,7 @@
     dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
     state: present
     create: yes
-    line: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazella_awx_project|upper }}-AWX-USER.pub') }}"
+    line: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
     owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
     mode: 0644
