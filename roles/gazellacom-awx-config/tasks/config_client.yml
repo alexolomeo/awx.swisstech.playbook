@@ -37,7 +37,7 @@
     dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
     state: present
     create: yes
-    line: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
+    line: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
     owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
     mode: 0644
