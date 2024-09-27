@@ -31,16 +31,6 @@
   ansible.builtin.copy: 
     src: "key/{{ gazellacom_project|upper }}-AWX-USER.pub"
     dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
-          
-#- name: "SSH USER - Add key for {{ gazellacom_client_user }}"
-#  lineinfile:
-#    dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
-#    state: present
-#    create: yes
-#    line: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
-#    owner: "{{ gazellacom_client_user }}"
-#    group: "{{ gazellacom_client_group }}"
-#    mode: 0644
 
 - name: "SSH USER - Add key for {{ gazellacom_client_user }} User"
   ansible.posix.authorized_key:
@@ -58,7 +48,7 @@
     group: root
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: "SSH USER - Delete compress {{ gazellacom_remote_workdir }}/build_{{ gazellacom_number_build }}.tar.gz"
+- name: "SSH USER - Delete file {{ gazellacom_project|upper }}-AWX-USER.pub"
   ansible.builtin.file:
     path: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
     state: absent
