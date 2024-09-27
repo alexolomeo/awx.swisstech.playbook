@@ -27,7 +27,7 @@
     owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
 
-- name: "SSH USER {{ gazellacom_project|upper }} {{ gazellacom_environment|upper }} - Copy the file from bbuffer key folder  {{ gazellacom_client_user }}"
+- name: "SSH USER {{ gazellacom_project|upper }} {{ gazellacom_environment|upper }} - Copy the file from buffer key folder  {{ gazellacom_client_user }}"
   ansible.builtin.copy: 
     src: "key/{{ gazellacom_project|upper }}-AWX-USER.pub"
     dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
