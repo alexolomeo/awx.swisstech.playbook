@@ -1,5 +1,5 @@
 ---
-- name: SSH USER - Add Gazellacom system group security
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Add Gazellacom system group security"
   become: yes
   ansible.builtin.group:
     name: "{{ gazellacom_client_group }}"
@@ -7,7 +7,7 @@
   tags:
     - gazellacom_user
 
-- name: SSH USER - Add Gazellacom AWX user
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Add Gazellacom AWX user"
   ansible.builtin.user:
     name: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
@@ -19,7 +19,7 @@
   tags:
     - gazellacom_user
 
-- name: "SSH USER - Add directory for /home/{{ gazellacom_client_user }}/.ssh User"
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Add directory for /home/{{ gazellacom_client_user }}/.ssh User"
   file:
     path: "/home/{{ gazellacom_client_user }}/.ssh"
     state: directory
@@ -27,19 +27,19 @@
     owner: "{{ gazellacom_client_user }}"
     group: "{{ gazellacom_client_group }}"
 
-- name: "SSH USER - Copy the file from bbuffer key folder  {{ gazellacom_client_user }}"
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Copy the file from bbuffer key folder  {{ gazellacom_client_user }}"
   ansible.builtin.copy: 
     src: "key/{{ gazellacom_project|upper }}-AWX-USER.pub"
     dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
 
-- name: "SSH USER - Add key for {{ gazellacom_client_user }} User"
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Add key for {{ gazellacom_client_user }} User"
   ansible.posix.authorized_key:
     user: "{{ gazellacom_client_user }}"
     state: present
     key: "{{ lookup('file', 'key/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
 
 
-- name: "SSH USER - Create sudoers config for {{ gazellacom_client_user }} user"
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Create sudoers config for {{ gazellacom_client_user }} user"
   ansible.builtin.template:
     src: gazellacom-sudo.j2
     dest: "/etc/sudoers.d/{{ gazellacom_client_user }}"
@@ -48,13 +48,13 @@
     group: root
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: "SSH USER - Delete file {{ gazellacom_project|upper }}-AWX-USER.pub"
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} - Delete file {{ gazellacom_project|upper }}-AWX-USER.pub"
   ansible.builtin.file:
     path: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
     state: absent
   ignore_errors: yes
 
-- name: SSH USER -  Create awx  directory
+- name: "SSH USER {{ gazellacom_project }} {{ gazellacom_environment }} -  Create awx  directory"
   ansible.builtin.file:
     path: "{{ gazellacom_client_base }}"
     state: directory
@@ -65,8 +65,5 @@
   tags:
     - gazellacom_log
 
-#- name: "push file to remote host {{ gazellacom_project }} {{ gazellacom_environment }}"
-#  block:
-#  when: inventory_hostname == 'com'
 
 
