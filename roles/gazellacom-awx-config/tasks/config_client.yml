@@ -32,15 +32,22 @@
     src: "key/{{ gazellacom_project|upper }}-AWX-USER.pub"
     dest: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
           
+#- name: "SSH USER - Add key for {{ gazellacom_client_user }}"
+#  lineinfile:
+#    dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
+#    state: present
+#    create: yes
+#    line: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
+#    owner: "{{ gazellacom_client_user }}"
+#    group: "{{ gazellacom_client_group }}"
+#    mode: 0644
+
 - name: "SSH USER - Add key for {{ gazellacom_client_user }}"
-  lineinfile:
-    dest: "/home/{{ gazellacom_client_user }}/.ssh/authorized_keys"
+  ansible.posix.authorized_key:
+    user: "{{ gazellacom_client_user }}"
     state: present
-    create: yes
-    line: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
-    owner: "{{ gazellacom_client_user }}"
-    group: "{{ gazellacom_client_group }}"
-    mode: 0644
+    key: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
+
 
 - name: "SSH USER - Create sudoers config for {{ gazellacom_client_user }} user"
   ansible.builtin.template:
