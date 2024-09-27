@@ -47,13 +47,11 @@
     user: "{{ gazellacom_client_user }}"
     state: present
     key: "{{ lookup('file', 'key/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
-#    key: "/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub"
-#    key: "{{ lookup('file', '/home/{{ gazellacom_client_user }}/.ssh/{{ gazellacom_project|upper }}-AWX-USER.pub') }}"
 
 
 - name: "SSH USER - Create sudoers config for {{ gazellacom_client_user }} user"
   ansible.builtin.template:
-    src: gazellacom.sudo.j2
+    src: gazellacom-sudo.j2
     dest: "/etc/sudoers.d/{{ gazellacom_client_user }}"
     mode: 0440
     owner: root
